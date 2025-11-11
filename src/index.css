@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+/* Base mínima: que todo ocupe 100% */
+@layer base {
+  html, body, #root {
+    height: 100%;
+    width: 100%;
+  }
+}
+
+/* ==== Animaciones suaves para el hero ==== */
+@keyframes pulse-slow {
+  0%, 100% { transform: scale(1); opacity: .55; }
+  50%      { transform: scale(1.08); opacity: .85; }
+}
+.pulse-slow { animation: pulse-slow 6s ease-in-out infinite; }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) }
+  50%      { transform: translateY(-6px) }
+}
+.float { animation: float 8s ease-in-out infinite; }
+
+/* ==== reveal on scroll (para NuestroProceso) ==== */
+.reveal { opacity: 0; transform: translateY(16px); transition: opacity .6s ease, transform .6s ease; }
+.reveal.in-view { opacity: 1; transform: none; }

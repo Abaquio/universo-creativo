@@ -1,0 +1,80 @@
+.card-swap-container {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  transform: translate(5%, 20%);
+  transform-origin: bottom right;
+  perspective: 900px;
+  overflow: visible;
+}
+
+.card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 12px;
+  border: 1px solid #fff;
+  background: #000;
+  color: #fff;
+
+  transform-style: preserve-3d;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .card-swap-container {
+    transform: scale(0.75) translate(25%, 25%);
+  }
+}
+
+@media (max-width: 480px) {
+  .card-swap-container {
+    transform: scale(0.55) translate(25%, 25%);
+  }
+}
+/* ----------------------
+   Nosotros: alineación fina del CardSwap
+   ---------------------- */
+
+/* Desktop (≥1024px): alinear con el bloque de texto */
+@media (min-width: 1024px) {
+  .nos-cards .card-swap-container {
+    position: relative;     /* deja de depender del bottom/right absolutos */
+    bottom: auto;
+    right: auto;
+    transform: translate(0, 6px); /* pequeño ajuste vertical para alinear con el H2 */
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+}
+
+/* Tablet (768–1023px): centrar y acercar al bloque */
+@media (max-width: 1023px) and (min-width: 768px) {
+  .nos-cards .card-swap-container {
+    position: relative;
+    transform: scale(0.9) translate(0, 0);
+    margin-top: 12px;
+    margin-bottom: 16px;
+  }
+}
+
+/* Mobile (≤767px): las cards van ARRIBA del texto, sin pisar el chip "Nuestra Historia" */
+@media (max-width: 767px) {
+  .nos-cards {
+    margin-top: 8px;   /* separa un poco del borde superior */
+  }
+  .nos-cards .card-swap-container {
+    position: relative;
+    transform: scale(0.8) translate(0, 0); /* nada de translateY grande que empuje hacia abajo */
+    margin-top: 8px;      /* evita que toque el chip */
+    margin-bottom: 12px;  /* separa de los títulos */
+  }
+}
+
+/* Opcional: un leve "lift" de la sombra del stack para que flote más */
+.nos-cards-stack .card {
+  box-shadow: 0 14px 32px rgba(0,0,0,.18);
+}
