@@ -1,3 +1,4 @@
+/* ====== CONTENEDOR ====== */
 .bubble-menu {
   left: 0;
   right: 0;
@@ -10,80 +11,83 @@
   pointer-events: none;
   z-index: 99;
 }
-
 .bubble-menu.fixed { position: fixed; }
 .bubble-menu.absolute { position: absolute; }
 
+/* Tamaño base para burbujas genéricas (toggle) */
 .bubble-menu .bubble {
-  --bubble-size: 48px;              /* Tamaño base de TODAS las burbujas */
+  --bubble-size: 48px;
   width: var(--bubble-size);
   height: var(--bubble-size);
   border-radius: 50%;
   background: #fff;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 16px rgba(0,0,0,.12);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   pointer-events: auto;
 }
-
 .bubble-menu .logo-bubble,
 .bubble-menu .toggle-bubble { will-change: transform; }
-
-/* 👉 Burbuja del logo: MISMO tamaño de la general, solo optimizamos el contenido */
-.bubble-menu .logo-bubble {
-  /* NO cambiamos --bubble-size aquí para no agrandar la burbuja */
-  width: var(--bubble-size);
-  height: var(--bubble-size);
-  padding: 0;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 
 .bubble-menu .toggle-bubble {
   width: var(--bubble-size);
   height: var(--bubble-size);
 }
 
-/* 👉 Logo más grande dentro del círculo (sin agrandar la burbuja) */
+/* ====== LOGO (burbuja dedicada, responsiva) ====== */
+:root { --logo-bubble-size: 64px; }
+@media (min-width: 768px)  { :root { --logo-bubble-size: 70px; } }
+@media (min-width: 1024px) { :root { --logo-bubble-size: 76px; } }
+
+.bubble-menu .logo-bubble {
+  width: var(--logo-bubble-size);
+  height: var(--logo-bubble-size);
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,.15);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  line-height: 0;         /* evita gap por imágenes inline */
+  transform: translateY(2px); /* pequeño ajuste para nivelar */
+}
+
 .bubble-menu .logo-content {
   width: 100%;
   height: 100%;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
 }
 
-.bubble-menu .bubble-logo {
-  display: block;
-  object-fit: contain;
-  max-height: 200%;     /* <- subimos el fill del logo */
-  max-width: 200%;
-}
-
-/* Asegura que imágenes o SVG respeten el fill dentro del contenedor */
-.bubble-menu .logo-content > .bubble-logo,
 .bubble-menu .logo-content > img,
-.bubble-menu .logo-content > svg {
+.bubble-menu .logo-content > svg,
+.bubble-menu .bubble-logo {
+  width: 86%;
+  height: 86%;
+  object-fit: contain;     /* sin deformar */
   display: block;
-  max-height: 100%;
-  max-width: 100%;
+  image-rendering: auto;
+  will-change: transform;
 }
 
-/* Si quieres un pelín más de presencia en pantallas grandes sin agrandar la burbuja,
-   solo empujamos el fill del logo a 97% */
-@media (min-width: 768px) {
-  .bubble-menu .bubble-logo,
-  .bubble-menu .logo-content > img,
-  .bubble-menu .logo-content > svg {
-    max-height: 97%;
-    max-width: 97%;
-  }
+/* Hover: giro rápido (CSS por si no quieres GSAP aquí) */
+.bubble-menu .logo-bubble:hover .bubble-logo,
+.bubble-menu .logo-bubble:hover img,
+.bubble-menu .logo-bubble:hover svg {
+  animation: logoSpin 1.2s ease-in-out;
 }
 
+/* (Opcional) Auto-giro por CSS si alguna vez lo necesitas:
+   agrega className="bubble-logo auto-spin" al <img> */
+.auto-spin {
+  animation: logoAutoSpin 7s linear infinite;
+}
+@keyframes logoSpin     { to { transform: rotate(360deg); } }
+@keyframes logoAutoSpin { to { transform: rotate(360deg); } }
+
+/* ====== BOTÓN HAMBURGUESA ====== */
 .bubble-menu .menu-btn {
   border: none;
   background: #fff;
@@ -94,7 +98,6 @@
   justify-content: center;
   padding: 0;
 }
-
 .bubble-menu .menu-line {
   width: 26px;
   height: 2px;
@@ -102,21 +105,14 @@
   border-radius: 2px;
   display: block;
   margin: 0 auto;
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition: transform .3s ease, opacity .3s ease;
   transform-origin: center;
 }
-
 .bubble-menu .menu-line + .menu-line { margin-top: 6px; }
+.bubble-menu .menu-btn.open .menu-line:first-child { transform: translateY(4px) rotate(45deg); }
+.bubble-menu .menu-btn.open .menu-line:last-child  { transform: translateY(-4px) rotate(-45deg); }
 
-.bubble-menu .menu-btn.open .menu-line:first-child {
-  transform: translateY(4px) rotate(45deg);
-}
-.bubble-menu .menu-btn.open .menu-line:last-child {
-  transform: translateY(-4px) rotate(-45deg);
-}
-
-/* ---------- Overlay y pills ---------- */
-
+/* ====== OVERLAY Y PILLS ====== */
 .bubble-menu-items {
   position: absolute;
   inset: 0;
@@ -126,8 +122,8 @@
   pointer-events: none;
   z-index: 98;
 }
-.bubble-menu-items.fixed { position: fixed; }
-.bubble-menu-items.absolute { position: absolute; }
+.bubble-menu-items.fixed   { position: fixed; }
+.bubble-menu-items.absolute{ position: absolute; }
 
 .bubble-menu-items .pill-list {
   list-style: none;
@@ -144,36 +140,25 @@
   pointer-events: auto;
   justify-content: stretch;
 }
-
-.bubble-menu-items .pill-list .pill-spacer {
-  width: 100%;
-  height: 0;
-  pointer-events: none;
-}
+.bubble-menu-items .pill-list .pill-spacer { width: 100%; height: 0; pointer-events: none; }
 
 .bubble-menu-items .pill-list .pill-col {
   display: flex;
   justify-content: center;
   align-items: stretch;
-  flex: 0 0 calc(100% / 3);
+  flex: 0 0 calc(100%/3);
   box-sizing: border-box;
 }
-
-.bubble-menu-items .pill-list .pill-col:nth-child(4):nth-last-child(2) {
-  margin-left: calc(100% / 6);
-}
-.bubble-menu-items .pill-list .pill-col:nth-child(4):last-child {
-  margin-left: calc(100% / 3);
-}
+.bubble-menu-items .pill-list .pill-col:nth-child(4):nth-last-child(2) { margin-left: calc(100%/6); }
+.bubble-menu-items .pill-list .pill-col:nth-child(4):last-child      { margin-left: calc(100%/3); }
 
 .bubble-menu-items .pill-link {
-  --pill-bg: #ffffff;
+  --pill-bg: #fff;
   --pill-color: #111;
-  --pill-border: rgba(0, 0, 0, 0.12);
-  --item-rot: 0deg;
   --pill-min-h: 160px;
   --hover-bg: #f3f4f6;
   --hover-color: #111;
+  --item-rot: 0deg;
 
   width: 100%;
   min-height: var(--pill-min-h);
@@ -181,25 +166,23 @@
   font-size: clamp(1.5rem, 4vw, 4rem);
   font-weight: 400;
   line-height: 0;
-
   border-radius: 999px;
   background: var(--pill-bg);
   color: var(--pill-color);
   text-decoration: none;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 14px rgba(0,0,0,.1);
 
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  transition: background 0.3s ease, color 0.3s ease;
+  transition: background .3s ease, color .3s ease;
   will-change: transform;
   box-sizing: border-box;
   white-space: nowrap;
   overflow: hidden;
   height: auto;
 }
-
 @media (min-width: 900px) {
   .bubble-menu-items .pill-link { transform: rotate(var(--item-rot)); }
   .bubble-menu-items .pill-link:hover {
@@ -211,7 +194,6 @@
     transform: rotate(var(--item-rot)) scale(0.94);
   }
 }
-
 .bubble-menu-items .pill-link .pill-label {
   display: inline-block;
   will-change: transform, opacity;
@@ -219,102 +201,16 @@
   line-height: 1.2;
 }
 
+/* Mobile */
 @media (max-width: 899px) {
-  .bubble-menu-items {
-    align-items: flex-start;
-    padding-top: 120px;
-  }
-
+  .bubble-menu-items { align-items: flex-start; padding-top: 120px; }
   .bubble-menu-items .pill-list { row-gap: 16px; }
-
-  .bubble-menu-items .pill-list .pill-col {
-    flex: 0 0 100%;
-    margin-left: 0 !important;
-    overflow: visible;
-  }
-
+  .bubble-menu-items .pill-list .pill-col { flex: 0 0 100%; margin-left: 0 !important; overflow: visible; }
   .bubble-menu-items .pill-link {
     font-size: clamp(1.2rem, 3vw, 4rem);
     padding: clamp(1rem, 2vw, 2rem) 0;
     min-height: 80px;
   }
-
-  .bubble-menu-items .pill-link:hover {
-    transform: scale(1.06);
-    background: var(--hover-bg);
-    color: var(--hover-color);
-  }
-
-  .bubble-menu-items .pill-link:active {
-    transform: scale(0.94);
-  }
-}
-
-/* === Versión final: logo grande y burbuja alineada (corrigida) === */
-
-/* Tamaño responsivo de la burbuja del logo */
-:root {
-  --logo-bubble-size: 64px;
-}
-@media (min-width: 768px) {
-  :root { --logo-bubble-size: 70px; }
-}
-@media (min-width: 1024px) {
-  :root { --logo-bubble-size: 76px; }
-}
-
-/* Burbuja del logo (alineada y consistente) */
-.bubble-menu .logo-bubble {
-  width: var(--logo-bubble-size);
-  height: var(--logo-bubble-size);
-  border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-  line-height: 0;            /* evita “espacio fantasma” de imágenes inline */
-  transform: translateY(2px);/* pequeño ajuste para nivelar con el botón */
-  will-change: transform;
-}
-
-/* Contenedor del logo */
-.bubble-menu .logo-content {
-  width: 100%;
-  height: 100%;
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-}
-
-/* Logo: grande, centrado y sin deformar (PNG o SVG) */
-.bubble-menu .logo-content > img,
-.bubble-menu .logo-content > svg,
-.bubble-menu .bubble-logo {
-  width: 86%;
-  height: 86%;
-  object-fit: contain;       /* mantiene proporción del logo */
-  display: block;
-  transform: none !important;/* evita hacks de translate/scale previos */
-  image-rendering: auto;
-}
-
-/* Giro suave al pasar el cursor (opcional) */
-.bubble-menu .logo-bubble:hover .bubble-logo,
-.bubble-menu .logo-bubble:hover img,
-.bubble-menu .logo-bubble:hover svg {
-  animation: logoSpin 1.2s ease-in-out;
-}
-
-/* Si quieres giro automático, aplica esta clase a la imagen desde React:
-   className="bubble-logo auto-spin" */
-.auto-spin {
-  animation: logoAutoSpin 7s linear infinite;
-}
-
-@keyframes logoSpin {
-  to { transform: rotate(360deg); }
-}
-@keyframes logoAutoSpin {
-  to { transform: rotate(360deg); }
+  .bubble-menu-items .pill-link:hover { transform: scale(1.06); background: var(--hover-bg); color: var(--hover-color); }
+  .bubble-menu-items .pill-link:active { transform: scale(0.94); }
 }
