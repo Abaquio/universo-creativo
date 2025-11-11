@@ -250,53 +250,71 @@
   }
 }
 
-/* === Versión final: logo grande y burbuja alineada === */
+/* === Versión final: logo grande y burbuja alineada (corrigida) === */
 
-.bubble-menu .logo-bubble {
-  --bubble-size: 68px; /* burbuja un poco más grande */
-  width: var(--bubble-size);
-  height: var(--bubble-size);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #fff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  overflow: hidden;
-  transform: translateY(2px); /* pequeño ajuste vertical para nivelar con el menú */
+/* Tamaño responsivo de la burbuja del logo */
+:root {
+  --logo-bubble-size: 64px;
+}
+@media (min-width: 768px) {
+  :root { --logo-bubble-size: 70px; }
+}
+@media (min-width: 1024px) {
+  :root { --logo-bubble-size: 76px; }
 }
 
+/* Burbuja del logo (alineada y consistente) */
+.bubble-menu .logo-bubble {
+  width: var(--logo-bubble-size);
+  height: var(--logo-bubble-size);
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  line-height: 0;            /* evita “espacio fantasma” de imágenes inline */
+  transform: translateY(2px);/* pequeño ajuste para nivelar con el botón */
+  will-change: transform;
+}
+
+/* Contenedor del logo */
 .bubble-menu .logo-content {
   width: 100%;
   height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
   overflow: hidden;
 }
 
-/* Logo más grande dentro del círculo */
-.bubble-menu .bubble-logo,
+/* Logo: grande, centrado y sin deformar (PNG o SVG) */
 .bubble-menu .logo-content > img,
-.bubble-menu .logo-content > svg {
-  width: 145%;       /* más grande */
-  height: 145%;
-  object-fit: cover;
+.bubble-menu .logo-content > svg,
+.bubble-menu .bubble-logo {
+  width: 86%;
+  height: 86%;
+  object-fit: contain;       /* mantiene proporción del logo */
   display: block;
-  transform: translate(-22%, -22%); /* centrado al sobrellenar */
+  transform: none !important;/* evita hacks de translate/scale previos */
+  image-rendering: auto;
 }
 
-/* Para pantallas grandes, aún más protagonista */
-@media (min-width: 1024px) {
-  .bubble-menu .logo-bubble {
-    --bubble-size: 76px;
-  }
+/* Giro suave al pasar el cursor (opcional) */
+.bubble-menu .logo-bubble:hover .bubble-logo,
+.bubble-menu .logo-bubble:hover img,
+.bubble-menu .logo-bubble:hover svg {
+  animation: logoSpin 1.2s ease-in-out;
+}
 
-  .bubble-menu .bubble-logo,
-  .bubble-menu .logo-content > img,
-  .bubble-menu .logo-content > svg {
-    width: 160%;
-    height: 160%;
-    transform: translate(-30%, -30%);
-  }
+/* Si quieres giro automático, aplica esta clase a la imagen desde React:
+   className="bubble-logo auto-spin" */
+.auto-spin {
+  animation: logoAutoSpin 7s linear infinite;
+}
+
+@keyframes logoSpin {
+  to { transform: rotate(360deg); }
+}
+@keyframes logoAutoSpin {
+  to { transform: rotate(360deg); }
 }
