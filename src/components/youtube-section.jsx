@@ -82,7 +82,7 @@ export default function YoutubeSection() {
   return (
     <section
       ref={rootRef}
-      id="videos"
+      id="youtube"
       className="relative overflow-hidden py-24 sm:py-32"
       style={{ backgroundColor: "#f7f1e6" }} // tono crema similar a tus secciones
     >

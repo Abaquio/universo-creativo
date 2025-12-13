@@ -39,6 +39,7 @@ const DEFAULT_ITEMS = [
     rotation: -8,
     hoverStyles: { bgColor: '#8b5cf6', textColor: '#ffffff' }
   }
+  
 ];
 
 export default function BubbleMenu({
