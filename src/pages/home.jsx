@@ -5,6 +5,7 @@ import ProximosEventos from '../components/ProximosEventos'
 import NuestroProceso from '../components/NuestroProceso'
 import Nosotros from '../components/Nosotros'
 import Youtube from '../components/youtube-section'
+import StandsSection from '../components/stands-section'
 import Footer from '../components/Footer'
 
 // Fondo (tus imágenes)
@@ -66,7 +67,8 @@ export default function Home() {
       <Nosotros />
       {/* Sección: Proximos eventos */}
       <Youtube/>
-      <ProximosEventos/>
+      <StandsSection/>
+      
 
       <Footer/>
     </div>
