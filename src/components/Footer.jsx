@@ -194,7 +194,7 @@ export default function Footer() {
       {/* Barra inferior */}
       <div className="mx-auto max-w-6xl px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
         <p className="text-amber-100/70 text-sm">
-          © {new Date().getFullYear()} Universo Creativo. Todos los derechos reservados.
+          © {new Date().getFullYear()} Universo Creativo. Desarrollado por Matías Sepúlveda.
         </p>
 
         <div className="flex items-center gap-4 text-amber-100/70 text-sm">
