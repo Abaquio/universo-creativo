@@ -1,16 +1,15 @@
 // src/components/stands-section.jsx
-import { useLayoutEffect, useRef } from "react";
+import React, { useLayoutEffect, useState, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Check, Store, MapPin } from "lucide-react";
+import SolicitarStandModal from "./modales/solicitarStand-modal";
 
-// ✅ Ajusta esta ruta según tu proyecto
 import standPrincipal from "../assets/stand_principal.png";
 
 export default function StandsSection() {
   const rootRef = useRef(null);
-  const bgRef = useRef(null);
-  const heroCardRef = useRef(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -19,239 +18,192 @@ export default function StandsSection() {
       const root = rootRef.current;
       if (!root) return;
 
-      // --- Parallax suave del fondo ---
-      if (bgRef.current) {
-        gsap.fromTo(
-          bgRef.current,
-          { y: -20 },
-          {
-            y: 30,
-            ease: "none",
-            scrollTrigger: {
-              trigger: root,
-              start: "top bottom",
-              end: "bottom top",
-              scrub: 1,
-            },
-          }
-        );
-      }
-
-      // --- Parallax suave de la imagen principal ---
-      if (heroCardRef.current) {
-        gsap.fromTo(
-          heroCardRef.current,
-          { y: 0 },
-          {
-            y: -18,
-            ease: "none",
-            scrollTrigger: {
-              trigger: root,
-              start: "top 90%",
-              end: "bottom top",
-              scrub: 1,
-            },
-          }
-        );
-      }
-
-      // --- Animación de entrada (y salida suave) re-ejecutable ---
+      // Entradas / salidas (se reinician al volver)
       gsap.fromTo(
-        root.querySelectorAll("[data-anim]"),
+        ".st-anim",
         { y: 22, autoAlpha: 0 },
         {
           y: 0,
           autoAlpha: 1,
           duration: 0.85,
           ease: "power3.out",
-          stagger: 0.08,
+          stagger: 0.12,
           scrollTrigger: {
             trigger: root,
-            start: "top 80%",
+            start: "top 82%",
             end: "bottom 20%",
-            toggleActions: "restart none none reverse", // ✅ se re-ejecuta al volver
-          },
-        }
-      );
-
-      // --- Animación extra en bullets (más orgánica) ---
-      gsap.fromTo(
-        root.querySelectorAll("[data-bullet]"),
-        { x: -8, autoAlpha: 0 },
-        {
-          x: 0,
-          autoAlpha: 1,
-          duration: 0.6,
-          ease: "power2.out",
-          stagger: 0.06,
-          scrollTrigger: {
-            trigger: root,
-            start: "top 75%",
             toggleActions: "restart none none reverse",
           },
         }
       );
+
+      // Parallax suave en la imagen
+      gsap.to(".st-hero-img", {
+        yPercent: -6,
+        ease: "none",
+        scrollTrigger: {
+          trigger: root,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: 0.6,
+        },
+      });
+
+      // Micro-hover lift (suave)
+      const card = root.querySelector(".st-card");
+      if (card) {
+        const onEnter = () =>
+          gsap.to(card, { y: -4, duration: 0.25, ease: "power2.out" });
+        const onLeave = () =>
+          gsap.to(card, { y: 0, duration: 0.25, ease: "power2.out" });
+
+        card.addEventListener("mouseenter", onEnter);
+        card.addEventListener("mouseleave", onLeave);
+
+        return () => {
+          card.removeEventListener("mouseenter", onEnter);
+          card.removeEventListener("mouseleave", onLeave);
+        };
+      }
     }, rootRef);
 
     return () => ctx.revert();
   }, []);
 
   const features = [
-    "Instalación completa del stand en tu evento",
-    "Variedad de productos personalizados disponibles",
-    "Atención profesional y dedicada",
-    "Productos exclusivos para eventos y ferias",
+    "Montaje completo del stand (estructura, exhibición y orden)",
+    "Productos ideales para congregación, ministerios, jóvenes y familias",
+    "Atención cercana y respetuosa, cuidando el ambiente del evento",
+    "Opciones para campañas, retiros, convenciones y ferias cristianas",
   ];
 
   return (
     <section
       ref={rootRef}
       id="stands"
-      className="relative overflow-hidden py-24 sm:py-28"
-      style={{ backgroundColor: "#0000" }}
+      className="relative overflow-hidden bg-white py-20 sm:py-24"
     >
-      {/* Fondo textura / glow (parallax) */}
+      {/* glow sutil */}
       <div
-        ref={bgRef}
-        className="pointer-events-none absolute inset-0 opacity-[0.10]"
+        className="pointer-events-none absolute -z-10 left-1/2 top-[-260px] h-[700px] w-[700px] -translate-x-1/2 rounded-full blur-3xl opacity-40"
         style={{
           background:
-            "radial-gradient(45% 45% at 50% 30%, rgba(251,191,36,.22) 0%, rgba(251,191,36,.08) 45%, rgba(0,0,0,0) 75%)",
+            "radial-gradient(40% 40% at 50% 50%, rgba(251,191,36,.22) 0%, rgba(251,191,36,.08) 45%, rgba(255,255,255,0) 78%)",
         }}
       />
 
-      <div className="mx-auto max-w-6xl px-6 lg:px-8 relative z-10">
+      <div className="mx-auto max-w-6xl px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-14">
-          <div
-            data-anim
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/70 border border-black/10 shadow-sm"
-          >
-            <Store className="w-4 h-4 text-amber-600" />
-            <span className="text-sm font-semibold text-black/80 tracking-wide">
-              Stands para Eventos
+        <div className="st-anim mx-auto mb-12 max-w-3xl text-center">
+          <div className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-4 py-2 shadow-sm">
+            <Store className="h-4 w-4 text-amber-500" />
+            <span className="text-sm font-semibold tracking-wide text-black/80">
+              Stand para Eventos
             </span>
           </div>
 
-          <h2
-            data-anim
-            className="mt-5 text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-black"
-          >
-            Llevamos Nuestro Stand a Tu Evento
+          <h2 className="mt-5 text-4xl font-black tracking-tight text-black sm:text-5xl">
+            Llevamos Nuestro Stand a Tu Actividad
           </h2>
 
-          <p
-            data-anim
-            className="mt-4 text-lg sm:text-xl text-black/70 max-w-3xl mx-auto"
-          >
-            ¿Tu comunidad organiza ferias, convenciones o actividades especiales?
-            Instalamos nuestro stand con productos personalizados perfectos para tu ocasión.
+          <p className="mt-4 text-base leading-relaxed text-black/60 sm:text-lg">
+            Si tu iglesia está <b>planificando</b> una convención, retiro, campaña o feria,
+            podemos coordinar un stand con productos personalizados listos para exhibición
+            y venta, con una estética cuidada y acorde al entorno.
           </p>
         </div>
 
-        {/* Layout principal */}
-        <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-start">
-          {/* Imagen principal (más pequeña) */}
-          <div className="flex justify-center lg:justify-start">
-            <div
-              ref={heroCardRef}
-              data-anim
-              className="
-                w-full
-                max-w-[520px]            /* ✅ controla tamaño (antes era gigante) */
-                sm:max-w-[560px]
-                lg:max-w-[520px]
-              "
-            >
-              <div className="rounded-3xl overflow-hidden bg-white shadow-[0_20px_60px_rgba(0,0,0,0.18)] border border-black/10">
-                <div className="relative">
-                  <img
-                    src={standPrincipal}
-                    alt="Stand Universo Creativo"
-                    className="w-full h-[260px] sm:h-[320px] object-cover"
-                    loading="lazy"
-                  />
-
-                  {/* Tag ubicación */}
-                  <div className="absolute bottom-4 left-4">
-                    <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/90 border border-black/10 shadow-sm backdrop-blur">
-                      <MapPin className="w-4 h-4 text-amber-600" />
-                      <span className="text-sm font-semibold text-black/80">
-                        Limache / Viña del Mar, Chile
-                      </span>
-                    </div>
+        {/* Main grid (responsive) */}
+        <div className="grid items-start gap-10 lg:grid-cols-2 lg:gap-16">
+          {/* Left: Image card */}
+          <div className="st-anim order-1 lg:order-none">
+            <div className="st-card overflow-hidden rounded-3xl border border-black/10 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.12)]">
+              <div className="relative">
+                <div className="mx-auto max-w-[640px] p-4 sm:p-5">
+                  <div className="overflow-hidden rounded-2xl bg-black/5">
+                    <img
+                      src={standPrincipal}
+                      alt="Stand de Universo Creativo para eventos"
+                      className="st-hero-img block h-auto w-full object-cover"
+                      loading="lazy"
+                      draggable={false}
+                    />
                   </div>
-                </div>
 
-                {/* Mini texto bajo imagen */}
-                <div className="p-5">
-                  <p className="text-black/75 leading-relaxed">
-                    Montamos un stand completo con productos listos para exhibición y venta,
-                    ideal para ferias, encuentros y actividades comunitarias.
+                  <div className="mt-4 inline-flex items-center gap-2 rounded-xl border border-black/10 bg-white px-4 py-2 shadow-sm">
+                    <MapPin className="h-4 w-4 text-amber-500" />
+                    <span className="text-sm font-medium text-black/80">
+                      Viña del Mar / Limache, Chile
+                    </span>
+                  </div>
+
+                  <p className="mt-4 text-sm leading-relaxed text-black/60 sm:text-base">
+                    Coordinamos la instalación y presentación del stand con productos pensados
+                    para comunidad cristiana, ideal para actividades con asistentes de todas las edades.
                   </p>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Texto + features */}
-          <div className="space-y-6">
-            <div data-anim className="space-y-3">
-              <h3 className="text-2xl sm:text-3xl font-extrabold text-black">
-                Servicio Completo de Stand
-              </h3>
-              <p className="text-black/70 text-lg leading-relaxed">
-                Nos encargamos de llevar la experiencia Universo Creativo a tu evento:
-                instalación, exhibición y atención. Todo con una estética cuidada y productos
-                que conectan con la gente.
-              </p>
-            </div>
+          {/* Right: Content */}
+          <div className="st-anim order-2 lg:order-none">
+            <h3 className="text-2xl font-extrabold tracking-tight text-black sm:text-3xl">
+              Servicio Completo para Actividades de Iglesia
+            </h3>
 
-            <ul className="space-y-4">
-              {features.map((txt, i) => (
-                <li
-                  key={i}
-                  data-bullet
-                  className="flex items-start gap-3"
-                >
-                  <span className="mt-0.5 h-6 w-6 rounded-full bg-amber-500/15 grid place-items-center border border-amber-600/20">
-                    <Check className="w-4 h-4 text-amber-700" />
+            <p className="mt-4 text-base leading-relaxed text-black/60 sm:text-lg">
+              Nos encargamos de coordinar todo: <b>montaje, exhibición y atención</b>, para que
+              tu comunidad tenga una experiencia ordenada y bonita, sin complicaciones.
+            </p>
+
+            <ul className="mt-7 space-y-4">
+              {features.map((text, i) => (
+                <li key={i} className="flex items-start gap-3">
+                  <span className="mt-0.5 grid h-6 w-6 place-items-center rounded-full bg-amber-500/15">
+                    <Check className="h-4 w-4 text-amber-600" />
                   </span>
-                  <span className="text-black/80 leading-relaxed">{txt}</span>
+                  <span className="text-sm leading-relaxed text-black/75 sm:text-base">
+                    {text}
+                  </span>
                 </li>
               ))}
             </ul>
 
-            {/*<div data-anim className="pt-2 flex flex-wrap gap-3">
-              <a
-                href="#contacto"
-                className="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-amber-500 text-black font-bold shadow-sm hover:bg-amber-400 transition-colors"
-              >
-                Solicitar Stand
-              </a>
-              <a
-                href="#eventos"
-                className="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-white/70 border border-black/10 text-black/80 font-semibold hover:bg-white transition-colors"
-              >
-                Ver Próximos Eventos
-              </a>
-            </div>*/}
-
-            {/* Caja final */}
-            <div
-              data-anim
-              className="mt-6 rounded-2xl bg-white/70 border border-black/10 p-5 shadow-sm"
-            >
-              <p className="text-black/80 font-medium">
-                <span className="text-amber-700 font-extrabold">
-                  ¿Organizas un evento?
+            {/* CTA box */}
+            <div className="st-anim mt-8 rounded-2xl border border-black/10 bg-white p-5 shadow-sm">
+              <p className="text-sm text-black/70 sm:text-base">
+                <span className="font-extrabold text-amber-600">
+                  ¿Quieres cotizar un stand para tu iglesia?
                 </span>{" "}
-                Escríbenos y coordinamos fechas, espacio y tipo de productos para tu comunidad.
+                Escríbenos y coordinamos fecha, lugar y lo que necesitas para tu actividad.
               </p>
+
+              <div className="mt-4 flex flex-wrap gap-3">
+                <button
+                  onClick={() => setIsModalOpen(true)}
+                  className="inline-flex items-center justify-center rounded-xl bg-amber-500 px-5 py-3 text-sm font-bold text-black shadow-md transition-transform hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  Solicitar Stand
+                </button>
+
+                <a
+                  href="#footer"
+                  className="inline-flex items-center justify-center rounded-xl border border-black/10 bg-white px-5 py-3 text-sm font-semibold text-black/80 shadow-sm transition-colors hover:bg-black/[0.03]"
+                >
+                  Ver Contacto
+                </a>
+              </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Modal (sin mensajes prellenados) */}
+      <SolicitarStandModal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </section>
   );
 }

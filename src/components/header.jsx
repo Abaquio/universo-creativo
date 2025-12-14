@@ -10,6 +10,7 @@ const navItems = [
   { label: "Proceso",   href: "#proceso",  ariaLabel: "Ir a Nuestro Proceso",   rotation:  8, hoverStyles: { bgColor: "#f59e0b", textColor: "#fff" } },
   { label: "Eventos",   href: "#eventos",  ariaLabel: "Ir a Próximos Eventos",  rotation:  8, hoverStyles: { bgColor: "#ef4444", textColor: "#fff" } },
   { label: "Youtube",  href: "#youtube", ariaLabel: "Ir a Nuestro Canal",          rotation: -8, hoverStyles: { bgColor: "#8b5cf6", textColor: "#fff" } },
+  { label: "Stands",  href: "#stands", ariaLabel: "Stands en tu evento",          rotation: -8, hoverStyles: { bgColor: "#8b5cf6", textColor: "#fff" } },
   { label: "Contacto",  href: "#footer", ariaLabel: "Ir a Contacto",          rotation: -8, hoverStyles: { bgColor: "#8b5cf6", textColor: "#fff" } },
 ];
 
